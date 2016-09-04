@@ -1,0 +1,19 @@
+{
+  "name": "appengine-navigator-distribute",
+  "description": "Navigator project location distribution app for Google App Engine",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "Federico Dominguez",
+  "engines": {
+    "node": "~4.2"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "monitor": "nodemon app.js",
+    "deploy": "gcloud app deploy"
+  },
+  "dependencies": {
+    "restify": "^2.5.1"
+  }
+}
