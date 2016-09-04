@@ -15,6 +15,20 @@
 // [START app]
 'use strict';
 
+// By default, the client will authenticate using the service account file
+// specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable and use
+// the project specified by the GCLOUD_PROJECT environment variable. See
+// https://googlecloudplatform.github.io/gcloud-node/#/docs/google-cloud/latest/guides/authentication
+var PubSub = require('@google-cloud/pubsub');
+
+// Instantiate a pubsub client
+var pubsubClient = PubSub({
+	projectId: 'navigator-cloud',
+	keyFilename: 'navigator-cloud-0137da819614.json'
+});
+
+var topic = pubsubClient.topic('navigator-location');
+
 var restify = require('restify');
 
 var server = restify.createServer();
@@ -38,10 +52,13 @@ server.post('/track', function track(req, res, next) {
 		username = jsonData.username;
 
 		client.post('/track', jsonData, function(error, request, response, obj){
-			//console.log('Response from remote service: %s',JSON.stringify(obj));
 			location = obj.location;
 
-			console.log('Here I should publish that user: %s is in %s',username,location);
+			var message = {username: username, location: location, timestamp: new Date()};
+
+			topic.publish({
+				data: message
+			}, function(err) {});
 
 			res.send(200, obj);
 		});
@@ -52,5 +69,17 @@ server.post('/track', function track(req, res, next) {
  });
 
 server.listen(8080, function() {
-  console.log('%s listening at %s', server.name, server.url);
+ 	console.log('%s listening at %s', server.name, server.url);
 });
+}
+
+//This code is only for testing purposes, it should be commented out while on production
+// topic.subscribe('navigator-location', {reuseExisting: true, autoAck: true}, function(err, subscription) {
+// 	// Register listeners to start pulling for messages.
+// 	function onError(err) {}
+// 	function onMessage(message) {
+// 		console.log('Subscription message: %s',JSON.stringify(message));
+// 	}
+// 	subscription.on('error', onError);
+// 	subscription.on('message', onMessage);
+// });
