@@ -71,7 +71,6 @@ server.post('/track', function track(req, res, next) {
 server.listen(8080, function() {
  	console.log('%s listening at %s', server.name, server.url);
 });
-}
 
 //This code is only for testing purposes, it should be commented out while on production
 // topic.subscribe('navigator-location', {reuseExisting: true, autoAck: true}, function(err, subscription) {
